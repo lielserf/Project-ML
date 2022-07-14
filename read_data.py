@@ -2,6 +2,7 @@ from scipy.io import arff
 import pandas as pd
 import scipy.io
 
+
 # path to data folders
 ARFF_PATH = './data/ARFF/'
 BIO_PATH = './data/bioconductor/'
@@ -80,10 +81,12 @@ data_name_to_function = {'CNS': read_arff_files, 'Lymphoma': read_arff_files, 'M
                          'Yale': read_scikit_files}
 
 
-def read_date(data_name):
+def read_data(data_name):
     """
     main function
     :param data_name: the data name to read
     :return: X, y data
     """
+    if isinstance(data_name, int):
+        data_name = list(data_name_to_function)[data_name - 1]
     return data_name_to_function[data_name](data_name)
