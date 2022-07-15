@@ -3,6 +3,7 @@ import numpy as np
 from sklearn import preprocessing
 from sklearn.impute import SimpleImputer
 from sklearn.base import BaseEstimator, TransformerMixin
+from numpy import ravel
 le = preprocessing.LabelEncoder()
 imp_mean = SimpleImputer(missing_values=np.NaN, strategy='mean')
 
@@ -48,4 +49,4 @@ def y_to_categorical(y):
     :param y: target column
     :return: y encoded to int
     """
-    return le.fit_transform(y)
+    return le.fit_transform(ravel(y))
