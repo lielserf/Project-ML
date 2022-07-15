@@ -20,6 +20,10 @@ class Convert(BaseEstimator, TransformerMixin):
     def transform(self, X):
         return self.X
 
+    def fit_transform(self, X, y=None, **fit_params):
+        self.fit(X)
+        return self.X
+
     def get_feature_names_out(self, lst=None):
         return self.X.columns
 
@@ -37,6 +41,10 @@ class FillNan(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        return self.X
+
+    def fit_transform(self, X, y=None, **fit_params):
+        self.fit(X)
         return self.X
 
     def get_feature_names_out(self, lst=None):
