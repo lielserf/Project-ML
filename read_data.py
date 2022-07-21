@@ -89,4 +89,5 @@ def read_data(data_name):
     """
     if isinstance(data_name, int):
         data_name = list(data_name_to_function)[data_name - 1]
-    return data_name, data_name_to_function[data_name](data_name)
+    X, y = data_name_to_function[data_name](data_name)
+    return data_name, X, y

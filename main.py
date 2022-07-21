@@ -3,101 +3,110 @@ patch_sklearn()
 import read_data as read
 from preprocessing import *
 from sklearn.pipeline import Pipeline
-from tempfile import mkdtemp
-from shutil import rmtree
 from sklearn.preprocessing import PowerTransformer, StandardScaler
 from sklearn.feature_selection import SelectFdr, f_classif, RFE, VarianceThreshold
-from sklearn.svm import SVC
 from fs.feature_selection import get_features_and_scorer
 from fs.MRMR import mrmr
 from fs.reliefF import reliefF, feature_ranking
-from ReliefF import ReliefF
 from utils.write_results import *
 from utils.clf_models import *
 import time
 
-""" 
--------------------------------------
-            Variables 
-------------------------------------- 
-"""
-cachedir = mkdtemp()
-svm = SVC(kernel="linear")
-list_of_databases = ['CNS', 'Lymphoma', 'MLL', 'Ovarian', 'SRBCT', 'ayeastCC', 'bladderbatch', 'CLL',
-                     'DLBCL', 'leukemiasEset', 'GDS4824', 'khan_train', 'NCI60_Affy',
-                     'Nutt-2003-v2_BrainCancer.xlsx - Sayfa1', 'Risinger_Endometrial Cancer.xlsx - Sayfa1',
-                     'madelon', 'ORL', 'RELATHE', 'USPS', 'Yale']
 
-""" 
--------------------------------------
-            Load Data 
-------------------------------------- 
-"""
-db_name, X, y = read.read_data('khan_train')
-multi_class = y.nunique() > 2
-y = y_to_categorical(y)
-X_cols = X.columns
-X_idx = X.index
+def load_data(db):
+    """
+    Read and load the database into dataframe
+    :param db: name or index of the db
+    :return: X, y and metadata
+    """
+    db_name, X, y = read.read_data(1)
+    multi_class = y.nunique() > 2
+    y = y_to_categorical(y)
+    X_cols = X.columns
+    X_idx = X.index
+    return X, y, db_name, X_cols, X_idx, multi_class
 
-""" 
------------------------------------------------------ 
-            PreProcessing - Pipelines 
------------------------------------------------------ 
-"""
-# preprocessing pipeline:
-pre_estimators = [('convert', Convert()), ('Fill_Nan', FillNan()), ('variance_threshold', VarianceThreshold()),
-                  ('scaler', StandardScaler(with_std=False)), ('norm', PowerTransformer())]
-pipe = Pipeline(pre_estimators, memory=cachedir)
-pipe.fit(X, y)
-X = pipe.transform(X)
 
-""" 
------------------------------------------------------ 
-                  Reducing 
------------------------------------------------------ 
-"""
-# mRmr
-start = time.time()
-idx, J_CMI, MIfy = mrmr(X, y, n_selected_features=100)
-mrmr_time = time.time() - start
+def per_processing(X, y):
+    """
+    Run pipeline pf preprocessing methods
+    """
+    pre_estimators = [('convert', Convert()), ('Fill_Nan', FillNan()), ('variance_threshold', VarianceThreshold()),
+                      ('scaler', StandardScaler(with_std=False)), ('norm', PowerTransformer())]
+    pipe = Pipeline(pre_estimators)
+    pipe.fit(X, y)
+    X = pipe.transform(X)
+    return X, y
 
-# RFE
-RFE = RFE(svm, n_features_to_select=1)
 
-# ReliefF
-start = time.time()
-score = reliefF(X, y)
-relieff_time = time.time() - start
-relieff_score = np.sort(score)[:100:-1]
-idx_relieff = feature_ranking(score)[:100]
+def get_reducers(X, y):
+    """
+    Reduce the feature set to 100
+    :param X:
+    :param y:
+    :return: dictionary contains the top-100 features and their scores
+    """
+    # mRmr
+    start = time.time()
+    idx, J_CMI, MIfy = mrmr(X, y, n_selected_features=100)
+    mrmr_time = time.time() - start
 
-# FDR
-Fdr = SelectFdr(f_classif, alpha=0.1)
+    # RFE
+    Rfe = RFE(SVC(kernel="linear"), n_features_to_select=1)
 
-reducers = {'mRmr': {'scorer': J_CMI, 'features_idx': idx, 'time': mrmr_time},
-            'RFE': {'func': RFE, 'scorer': [], 'features': [], 'time': 0},
-            'ReliefF': {'func': ReliefF, 'scorer': relieff_score, 'features': idx_relieff, 'time': relieff_time},
-            'Fdr': {'func': Fdr, 'scorer': [], 'features': [], 'time': 0}}
+    # ReliefF
+    start = time.time()
+    score = reliefF(X, y)
+    relieff_time = time.time() - start
+    relieff_score = np.sort(score)[:100:].tolist()
+    idx_relieff = feature_ranking(score)[:100].tolist()
 
-"""
--------------------------------------
-    Main Loop
--------------------------------------
-"""
+    # FDR
+    Fdr = SelectFdr(f_classif, alpha=0.1)
 
-N_FEATURES_OPTIONS = [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 50, 100]
-for r in reducers:
-    if r not in ['mRmr', 'ReliefF']:
-        start = time.time()
-        reducers[r]['func'].fit(X, y)
-        timeit = time.time() - start
-        reducers[r]['features'], reducers[r]['scorer'] = get_features_and_scorer(r, reducers[r]['func'])
-        reducers[r]['time'] = timeit
-    for k in N_FEATURES_OPTIONS:
-        X_new = X[:, reducers[r]['features'][:k]]
-        models = get_models()
-        models_scores = {}
-        for clf, model in models.items():
-            models_scores[clf] = evaluate_model(model, X_new, y, multi_class)
-        write_result(db_name, len(X_idx), X_cols, r, clf, k, reducers[r]['time'], reducers[r]['features'][:k], reducers[r]['scorer'][:k], models_scores)
-rmtree(cachedir)
+    reducers = {'mRmr': {'scorer': J_CMI.tolist(), 'features': idx.tolist(), 'time': mrmr_time},
+                'RFE': {'func': Rfe, 'scorer': [], 'features': [], 'time': 0},
+                'ReliefF': {'scorer': relieff_score, 'features': idx_relieff, 'time': relieff_time},
+                'Fdr': {'func': Fdr, 'scorer': [], 'features': [], 'time': 0}}
+
+    for r in reducers:
+        if r not in ['mRmr', 'ReliefF']:
+            start = time.time()
+            reducers[r]['func'].fit(X, y)
+            timeit = time.time() - start
+            reducers[r]['features'], reducers[r]['scorer'] = get_features_and_scorer(r, reducers[r]['func'])
+            reducers[r]['time'] = timeit
+
+    return reducers
+
+
+def main(db):
+    """
+    Main Function - run all the program
+    :return: Write to disk csv file with results
+    """
+    X, y, db_name, X_cols, X_idx, multi_class = load_data(db)
+    X, y = per_processing(X, y)
+    reducers = get_reducers(X, y)
+    cv_name, cv = cv_djustment(len(X))
+    N_FEATURES_OPTIONS = [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 50, 100]
+
+    df_res = create_new_results_df()
+    for r in reducers:
+        for k in reversed(N_FEATURES_OPTIONS):
+            X_new = X[:, :][:, reducers[r]['features'][:k]]
+            models = get_models()
+            models_scores = {}
+            for clf, model in models.items():
+                models_scores[clf] = evaluate_model(model, X_new, y, cv_name, cv, multi_class)
+            df_res = write_result(df_res, db_name, len(X_idx), X_cols, r, k, reducers[r]['time'], reducers[r]['features'][:k], reducers[r]['scorer'][:k], models_scores)
+    save_result(df_res, db_name)
+
+
+if __name__ == "__main__":
+    args = 1
+    if args == 'all':
+        for i in range(1,21):
+            main(1)
+    else:
+        main(args)

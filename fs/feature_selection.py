@@ -7,7 +7,7 @@ def get_features_and_scorer(reducer, reducer_method):
         features = np.argsort(p_v)[:100]
         score = np.sort(p_v)[:100]
         return features, score
-    elif reducer == 'RFE':
+    elif reducer == 'Rfe':
         ranking = reducer_method.ranking_
         features = np.argsort(ranking)[:100]
         score = np.sort(ranking)[:100]
