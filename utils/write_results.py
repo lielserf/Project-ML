@@ -1,4 +1,19 @@
 import pandas as pd
+import os
+
+
+def concat_all_db():
+    path = '../output/'
+    for i, filename in enumerate(os.listdir(path)):
+        if i == 0:
+            df = pd.read_csv(path+filename)
+            continue
+        df_temp = pd.read_csv(path+filename)
+        df = pd.concat([df, df_temp], ignore_index=True)
+    df.to_csv(path+'All DB - All Results.csv')
+    df = df.loc[df['Measure Type'] == 'AUC']
+    df.to_csv(path + 'All DB - AUC.csv')
+
 
 def create_new_results_df():
     df_result = pd.DataFrame(columns=['Dataset Name', 'Number of samples', 'Original Number of features',
@@ -8,8 +23,17 @@ def create_new_results_df():
     return df_result
 
 
+def print_best(df, db_name):
+    auc_df = df.loc[df['Measure Type'] == 'AUC']
+    auc_df = auc_df.loc[auc_df['Measure Value'].idxmax()]
+    print(f"{db_name} --> Best Configuration ----- \n\t\tFiltering Algorithm: {auc_df['Filtering Algorithm']}"
+          f"\n\t\tK: {auc_df['Number of features selected (K)']}"
+          f"\n\t\tLearning algorithm: {auc_df['Learning algorithm']}")
+
+
 def save_result(df, db_name):
-    df.to_csv(f'{db_name}.csv')
+    print_best(df, db_name)
+    df.to_csv('./output/'+f'{db_name}.csv')
 
 
 def get_feature_names_by_idx(col_names, idx):
@@ -18,8 +42,8 @@ def get_feature_names_by_idx(col_names, idx):
 
 def write_result(df, db_name, sample_num, org_features, reduce_method, k, reduce_time, features_idx, score_features, models_scores):
     features_num = len(org_features)
-    cv_method = models_scores['SVM']['cv']
-    folds = models_scores['SVM']['folds']
+    cv_method = models_scores[list(models_scores)[0]]['cv']
+    folds = models_scores[list(models_scores)[0]]['folds']
     selected_features = get_feature_names_by_idx(org_features, features_idx).tolist()
     selected_features = ';'.join(selected_features)
     score_features = [str(i) for i in score_features]
@@ -33,7 +57,3 @@ def write_result(df, db_name, sample_num, org_features, reduce_method, k, reduce
                 df.loc[len(df)] = [db_name, sample_num, features_num, reduce_method, clf, k, cv_method, folds, metric,
                                   models_scores[clf][metric], selected_features, score_features]
     return df
-
-
-
-

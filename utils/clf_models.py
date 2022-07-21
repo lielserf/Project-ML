@@ -48,7 +48,7 @@ def get_scores(y_test, y_pred, y_score, multi_class):
         scoring_dict['MCC'] = matthews_corrcoef(y_test, y_pred)
         scoring_dict['AUC'] = roc_auc_score(y_test, y_score[:, 1])
         precision, recall, _ = precision_recall_curve(y_test, y_score[:, 1])
-        scoring_dict['PR-AUC'] = auc(precision, recall)
+        scoring_dict['PR-AUC'] = auc(recall,precision)
     return scoring_dict
 
 

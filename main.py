@@ -4,10 +4,8 @@ import read_data as read
 from preprocessing import *
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PowerTransformer, StandardScaler
-from sklearn.feature_selection import SelectFdr, f_classif, RFE, VarianceThreshold
-from fs.feature_selection import get_features_and_scorer
-from fs.MRMR import mrmr
-from fs.reliefF import reliefF, feature_ranking
+from sklearn.feature_selection import VarianceThreshold
+from fs.feature_selection import run_reducer
 from utils.write_results import *
 from utils.clf_models import *
 import time
@@ -46,37 +44,14 @@ def get_reducers(X, y):
     :param y:
     :return: dictionary contains the top-100 features and their scores
     """
-    # mRmr
-    start = time.time()
-    idx, J_CMI, MIfy = mrmr(X, y, n_selected_features=100)
-    mrmr_time = time.time() - start
 
-    # RFE
-    Rfe = RFE(SVC(kernel="linear"), n_features_to_select=1)
-
-    # ReliefF
-    start = time.time()
-    score = reliefF(X, y)
-    relieff_time = time.time() - start
-    relieff_score = np.sort(score)[:100:].tolist()
-    idx_relieff = feature_ranking(score)[:100].tolist()
-
-    # FDR
-    Fdr = SelectFdr(f_classif, alpha=0.1)
-
-    reducers = {'mRmr': {'scorer': J_CMI.tolist(), 'features': idx.tolist(), 'time': mrmr_time},
-                'RFE': {'func': Rfe, 'scorer': [], 'features': [], 'time': 0},
-                'ReliefF': {'scorer': relieff_score, 'features': idx_relieff, 'time': relieff_time},
-                'Fdr': {'func': Fdr, 'scorer': [], 'features': [], 'time': 0}}
-
+    reducers = {'mRmr': {},
+                'RFE': {},
+                'ReliefF': {},
+                'Fdr': {}
+                }
     for r in reducers:
-        if r not in ['mRmr', 'ReliefF']:
-            start = time.time()
-            reducers[r]['func'].fit(X, y)
-            timeit = time.time() - start
-            reducers[r]['features'], reducers[r]['scorer'] = get_features_and_scorer(r, reducers[r]['func'])
-            reducers[r]['time'] = timeit
-
+        reducers[r] = run_reducer(r, X, y)
     return reducers
 
 
