@@ -58,5 +58,3 @@ def y_to_categorical(y):
     :return: y encoded to int
     """
     return le.fit_transform(ravel(y))
-
-print("fffff")
