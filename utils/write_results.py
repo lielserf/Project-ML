@@ -28,7 +28,8 @@ def print_best(df, db_name):
     auc_df = auc_df.loc[auc_df['Measure Value'].idxmax()]
     print(f"{db_name} --> Best Configuration ----- \n\t\tFiltering Algorithm: {auc_df['Filtering Algorithm']}"
           f"\n\t\tK: {auc_df['Number of features selected (K)']}"
-          f"\n\t\tLearning algorithm: {auc_df['Learning algorithm']}")
+          f"\n\t\tLearning algorithm: {auc_df['Learning algorithm']}"
+          f"\n\t\tAUC Score: {auc_df['Measure Value']}")
 
 
 def save_result(df, db_name):

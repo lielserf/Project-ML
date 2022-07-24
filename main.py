@@ -17,7 +17,7 @@ def load_data(db):
     :param db: name or index of the db
     :return: X, y and metadata
     """
-    db_name, X, y = read.read_data(1)
+    db_name, X, y = read.read_data(db)
     multi_class = y.nunique() > 2
     y = y_to_categorical(y)
     X_cols = X.columns
@@ -79,9 +79,9 @@ def main(db):
 
 
 if __name__ == "__main__":
-    args = 1
+    args = 3
     if args == 'all':
         for i in range(1,21):
-            main(1)
+            main(i)
     else:
         main(args)
