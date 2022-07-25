@@ -1,6 +1,12 @@
 from sklearn.svm import SVC
 from sklearn.feature_selection import mutual_info_classif as MIC
 import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix, accuracy_score
+import pandas as pd
+from sklearn.datasets import fetch_openml
+from sklearn.feature_selection import SelectKBest, SelectPercentile, mutual_info_classif
 
 
 class ReduceDF():
@@ -12,40 +18,47 @@ class ReduceDF():
     ):
         self.n_features_to_select = n_features_to_select
         self.features = []
-        self.score = []
-
+        self.score = {}
 
     def fit(self, X, y):
-        """Fit the RFE model and then the underlying estimator on the selected features.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix} of shape (n_samples, n_features)
-            The training input samples.
-
-        y : array-like of shape (n_samples,)
-            The target values.
-
-        Returns
-        -------
-        self : object
-            Fitted estimator.
-        """
         return self._fit(X, y)
-    def get_information_gain_features(X, y):
-        mi_score = MIC(X,y)
-        mi_score_selected_index = np.where(mi_score > 0.25)[0]
 
-        return
+    def map_local_index(self, local_index, global_index):
+        c = [global_index[i] for i in local_index]
+        return c
+
+
+    def svm(self,X,y):
+        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+                                                            random_state=4)
+
+        if len(np.unique(y)) > 2:
+            clf = SVC()
+            clf.fit(x_train, y_train)
+            y_pred = clf.predict(x_test)
+            accuracy = accuracy_score(y_test, y_pred) * 100
+
+        else:
+            clf = SVC()
+            clf.fit(x_train, y_train)
+            y_pred = clf.predict(x_test)
+            accuracy = accuracy_score(y_test, y_pred) * 100
+        print(accuracy)
+        return accuracy
+
+    def get_information_gain_features(self,X, y):
+
+        selector = SelectPercentile(mutual_info_classif, percentile=25)
+        X_reduced = selector.fit_transform(X, y)
+        cols = selector.get_support(indices=True)
+        score_select_featuers = [selector.scores_[i] for i in cols]
+        return cols, score_select_featuers
 
     def _fit(self, X, y):
-        # Parameter step_score controls the calculation of self.scores_
-        # step_score is not exposed to users
-        # and is used when implementing RFECV
-        # self.scores_ will not be calculated when calling _fit through fit
 
-        dict_group_df = {}
         dict_group_sub = {}
+        dict_group_original_index= {}
 
         n_features = X.shape[1]
         # number of features in each group
@@ -54,95 +67,45 @@ class ReduceDF():
         n = int(n_features / k)
         index_column = [i for i in range(X.shape[1])]
         for i in range(n):
-            d_i = X[:,index_column[i*k:i*k+k]]
-            dict_group_df[i] = d_i
-
-        # the best results is for svm with information gain of 25%
-        for k in dict_group_sub.keys():
-            dict_group_sub[k] = self.get_information_gain_features(X, y)
-            # X_2 = X[:, mi_score_selected_index]
+            d_i = X[:, index_column[i*k:i*k+k]]
+            dict_group_original_index[i] = index_column[i*k:i*k+k]
+            dict_group_sub[i] = self.get_information_gain_features(d_i, y)
 
 
 
-
-        # ranking_ = np.ones(n_features, dtype=int)
-        #
-        # if step_score:
-        #     self.scores_ = []
-        #
-        # # Elimination
-        # while np.sum(support_) > n_features_to_select:
-        #     # Remaining features
-        #     features = np.arange(n_features)[support_]
-        #
-        #     # Rank the remaining features
-        #     estimator = clone(self.estimator)
-        #     if self.verbose > 0:
-        #         print("Fitting estimator with %d features." % np.sum(support_))
-        #
-        #     estimator.fit(X[:, features], y, **fit_params)
-
-        #     # Get importance and rank them
-        #     importances = _get_feature_importances(
-        #         estimator,
-        #         self.importance_getter,
-        #         transform_func="square",
-        #     )
-        #     ranks = np.argsort(importances)
-        #
-        #     # for sparse case ranks is matrix
-        #     ranks = np.ravel(ranks)
-        #
-        #     # Eliminate the worse features
-        #     threshold = min(step, np.sum(support_) - n_features_to_select)
-        #
-        #     # Compute step score on the previous selection iteration
-        #     # because 'estimator' must use features
-        #     # that have not been eliminated yet
-        #     if step_score:
-        #         self.scores_.append(step_score(estimator, features))
-        #     support_[features[ranks][:threshold]] = False
-        #     ranking_[np.logical_not(support_)] += 1
-        #
-        # # Set final attributes
-        # features = np.arange(n_features)[support_]
-        # self.estimator_ = clone(self.estimator)
-        # self.estimator_.fit(X[:, features], y, **fit_params)
-        #
-        # # Compute step score when only n_features_to_select features left
-        # if step_score:
-        #     self.scores_.append(step_score(self.estimator_, features))
-        # self.n_features_ = support_.sum()
-        # self.support_ = support_
-        # self.ranking_ = ranking_
-        #
-        # return self
+        global_index_select = self.map_local_index(dict_group_sub[0][0], dict_group_original_index[0])
+        x_sub = X[:, global_index_select]
+        basline = self.svm(x_sub, y)
+        s_aux = global_index_select
+        self.score = dict(zip(dict_group_sub[0][0], dict_group_sub[0][1]))
 
 
-    def score(self, X, y, **fit_params):
-        """Reduce X to the selected features and return the score of the underlying estimator.
+        for i in range(1,n):
+            s_i = dict_group_sub[i]
+            global_index_select = self.map_local_index(s_i[0], dict_group_original_index[i])
+            s_aux.extend(global_index_select)
+            x_sub = X[:, s_aux]
+            accuracy = self.svm(x_sub, y)
 
-        Parameters
-        ----------
-        X : array of shape [n_samples, n_features]
-            The input samples.
+            if accuracy > basline:
+                basline = accuracy
+                for i in range(len(global_index_select)):
+                    self.score[global_index_select[i]] = s_i[1][i]
 
-        y : array of shape [n_samples]
-            The target values.
+            else:
+                s_aux = [x for x in s_aux if x not in global_index_select]
 
-        **fit_params : dict
-            Parameters to pass to the `score` method of the underlying
-            estimator.
+        sorted_score = sorted(self.score.items(), key=lambda x: x[1])
+        sorted_dict = {k: v for k, v in sorted_score}
 
-            .. versionadded:: 1.0
+        self.features = list(sorted_dict.keys())
+        self.score = list(sorted_dict.values())
+        print(sorted_score)
 
-        Returns
-        -------
-        score : float
-            Score of the underlying base estimator computed with the selected
-            features returned by `rfe.transform(X)` and `y`.
-        """
-        check_is_fitted(self)
-        return self.estimator_.score(self.transform(X), y, **fit_params)
+
+
+
+
+
 
 

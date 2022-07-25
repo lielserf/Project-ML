@@ -38,10 +38,13 @@ def run_reducer(method, X, y):
         start = time.time()
         DF.fit(X, y)
         timeit = time.time() - start
-        # features, scores = get_features_and_scorer('DF', DF)
-        # run_time = timeit
-    reducer_feature['features'] = features.tolist()
-    reducer_feature['scorer'] = scores.tolist()
+        features, scores = get_features_and_scorer('DF', DF)
+        run_time = timeit
+        reducer_feature['features'] = features
+        reducer_feature['scorer'] = scores
+    if method !='DF':
+        reducer_feature['features'] = features.tolist()
+        reducer_feature['scorer'] = scores.tolist()
     reducer_feature['time'] = run_time
     return reducer_feature
 
@@ -59,7 +62,7 @@ def get_features_and_scorer(reducer, reducer_method):
         return features, score
     elif reducer == 'DF':
         features = reducer_method.features[:100]
-        score = reducer_method.ranking[:100]
+        score = reducer_method.score[:100]
         return features, score
 
 
