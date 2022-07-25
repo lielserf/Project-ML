@@ -4,6 +4,7 @@ from fs.MRMR import mrmr
 from fs.reliefF import reliefF, feature_ranking
 from sklearn.feature_selection import SelectFdr, f_classif, RFE
 from sklearn.svm import SVC
+from fs.DF import ReduceDF
 
 
 def run_reducer(method, X, y):
@@ -32,6 +33,13 @@ def run_reducer(method, X, y):
         timeit = time.time() - start
         features, scores = get_features_and_scorer('Fdr', Fdr)
         run_time = timeit
+    elif method == 'DF':
+        DF = ReduceDF(n_features_to_select=100)
+        start = time.time()
+        DF.fit(X, y)
+        timeit = time.time() - start
+        # features, scores = get_features_and_scorer('DF', DF)
+        # run_time = timeit
     reducer_feature['features'] = features.tolist()
     reducer_feature['scorer'] = scores.tolist()
     reducer_feature['time'] = run_time
@@ -48,6 +56,10 @@ def get_features_and_scorer(reducer, reducer_method):
         ranking = reducer_method.ranking_
         features = np.argsort(ranking)[:100]
         score = np.sort(ranking)[:100]
+        return features, score
+    elif reducer == 'DF':
+        features = reducer_method.features[:100]
+        score = reducer_method.ranking[:100]
         return features, score
 
 

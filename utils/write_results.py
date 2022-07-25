@@ -19,7 +19,7 @@ def create_new_results_df():
     df_result = pd.DataFrame(columns=['Dataset Name', 'Number of samples', 'Original Number of features',
                                   'Filtering Algorithm', 'Learning algorithm', 'Number of features selected (K)',
                                   'CV Method', 'Fold', 'Measure Type', 'Measure Value',
-                                  'List of Selected Features Names', 'Selected Features scores'])
+                                  'List of Selected Features Names', 'Selected Features scores'], dtype=object)
     return df_result
 
 
