@@ -43,12 +43,11 @@ class mRmd():
 
         return mi_k_j, cmi
 
-    def choose_feature_maximizes_mrmd(self, redundancy, mi, selected):
+    def choose_feature_maximizes_mrmd(self, redundancy, mi, selected, F):
         """ calculate J(Xk)=I(Xk;Y)−1|S|∑Xj∈S{I(Xj;Xk)−I(Xk;Y|Xj)}"""
         mrmd_values = dict()
         inverse_s = 1 / len(selected)
-        for x_k_j_pair in redundancy:
-            x_k = x_k_j_pair[0]
+        for x_k in F:
 
             # I(Xk;Y)
             mi_k_y = mi[x_k]
@@ -81,17 +80,18 @@ class mRmd():
         self.score.append(mi_features_target[S[0]])
 
         # stage 4 - greedy selection
+        feature_redundancy = dict()
         while len(S) < self.n_features_to_select:
             F = list(set(features_index) - set(S))
-            feature_redundancy = dict()
 
             # stage 4.a - calculate the new feature redundancy term
             for X_k in F:
-                for X_j in S:
-                    mi_jk, mi_kyj = self.calculate_new_feature_redundancy_term(X[:, X_k].tolist(), X[:, X_j].tolist(), y.tolist())
-                    feature_redundancy[(X_k, X_j)] = (mi_jk, mi_kyj)
+                mi_jk, mi_kyj = self.calculate_new_feature_redundancy_term(X[:, X_k].tolist(), X[:, S[-1]].tolist(), y.tolist())
+                feature_redundancy[(X_k, S[-1])] = (mi_jk, mi_kyj)
             # stage 4.b - select the next feature
-            feature, score = self.choose_feature_maximizes_mrmd(feature_redundancy, mi_features_target, S)
+
+            feature, score = self.choose_feature_maximizes_mrmd(feature_redundancy, mi_features_target, S, F)
             S.append(feature)
             self.score.append(score)
-        self.features = S
+        self.features = np.array(S)
+        self.score = np.array(self.score)
