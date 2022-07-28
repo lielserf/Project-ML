@@ -52,7 +52,7 @@ def run_reducer(method, X, y):
     elif method == 'mRmd':
         mrmd = mRmd(n_features_to_select=100)
         start = time.time()
-        mRmd.fit(X, y)
+        mrmd.fit(X, y)
         timeit = time.time() - start
         features, scores = get_features_and_scorer('mRmd', mrmd)
         run_time = timeit

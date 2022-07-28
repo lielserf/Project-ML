@@ -88,7 +88,7 @@ class mRmd():
             # stage 4.a - calculate the new feature redundancy term
             for X_k in F:
                 for X_j in S:
-                    mi_jk, mi_kyj = self.calculate_new_feature_redundancy_term(X[:, X_k], X[:, X_j], y)
+                    mi_jk, mi_kyj = self.calculate_new_feature_redundancy_term(X[:, X_k].tolist(), X[:, X_j].tolist(), y.tolist())
                     feature_redundancy[(X_k, X_j)] = (mi_jk, mi_kyj)
             # stage 4.b - select the next feature
             feature, score = self.choose_feature_maximizes_mrmd(feature_redundancy, mi_features_target, S)

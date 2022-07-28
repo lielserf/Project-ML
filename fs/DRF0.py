@@ -1,11 +1,7 @@
-from sklearn.svm import SVC
-from sklearn.feature_selection import mutual_info_classif as MIC
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix, accuracy_score
-import pandas as pd
-from sklearn.datasets import fetch_openml
 from sklearn.feature_selection import SelectKBest, SelectPercentile, mutual_info_classif
 from skfeature.function.statistical_based import CFS
 # By having an ordered ranking, features with similar relevance to the class will be in the
@@ -23,7 +19,6 @@ class ReduceDRF0():
         self.score = {}
 
     def fit(self, X, y):
-
         return self._fit(X, y)
 
     def map_local_index(self, local_index, global_index):
@@ -33,7 +28,6 @@ class ReduceDRF0():
     # ranking the original features before generating the subsets
     # the method we choose is informatoin gain
     def partition_dataset(self,X, y):
-
         selector = SelectKBest(mutual_info_classif, k=X.shape[1])
         X_reduced = selector.fit_transform(X, y)
         cols = selector.get_support(indices=True)
@@ -45,13 +39,10 @@ class ReduceDRF0():
         return list(sorted_dict.keys())
 
     def CFS(self,X, y):
-
         idx = CFS.cfs(X, y)
         idx_list = np.ndarray.tolist(idx)
         score_select_featuers= [1 for i in idx_list]
         return idx_list,  score_select_featuers
-
-
 
     def svm(self,X,y):
         x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
@@ -60,11 +51,9 @@ class ReduceDRF0():
         clf.fit(x_train, y_train)
         y_pred = clf.predict(x_test)
         accuracy = accuracy_score(y_test, y_pred) * 100
-        print(accuracy)
         return accuracy
 
     def get_information_gain_features(self,X, y):
-
         selector = SelectPercentile(mutual_info_classif, percentile=25)
         X_reduced = selector.fit_transform(X, y)
         cols = selector.get_support(indices=True)
@@ -72,7 +61,6 @@ class ReduceDRF0():
         return cols, score_select_featuers
 
     def _fit(self, X, y):
-
         dict_group_sub = {}
         dict_group_original_index= {}
 
@@ -114,12 +102,3 @@ class ReduceDRF0():
 
         self.features = list(sorted_dict.keys())
         self.score = list(sorted_dict.values())
-        print(sorted_score)
-
-
-
-
-
-
-
-
