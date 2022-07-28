@@ -5,6 +5,7 @@ from fs.reliefF import reliefF, feature_ranking
 from sklearn.feature_selection import SelectFdr, f_classif, RFE
 from sklearn.svm import SVC
 from fs.DF import ReduceDF
+from fs.DRF0 import ReduceDRF0
 
 
 def run_reducer(method, X, y):
@@ -42,7 +43,16 @@ def run_reducer(method, X, y):
         run_time = timeit
         reducer_feature['features'] = features
         reducer_feature['scorer'] = scores
-    if method !='DF':
+    elif method == 'DRF0':
+        DRF0 = ReduceDRF0(n_features_to_select=100)
+        start = time.time()
+        DRF0.fit(X, y)
+        timeit = time.time() - start
+        features, scores = get_features_and_scorer('DRF0', DRF0)
+        run_time = timeit
+        reducer_feature['features'] = features
+        reducer_feature['scorer'] = scores
+    if method not in ['DF', 'DRF0']:
         reducer_feature['features'] = features.tolist()
         reducer_feature['scorer'] = scores.tolist()
     reducer_feature['time'] = run_time
@@ -64,6 +74,12 @@ def get_features_and_scorer(reducer, reducer_method):
         features = reducer_method.features[:100]
         score = reducer_method.score[:100]
         return features, score
+    elif reducer == 'DRF0':
+        features = reducer_method.features[:100]
+        score = reducer_method.score[:100]
+        return features, score
+
+
 
 
 

@@ -3,7 +3,7 @@ import os
 
 
 def concat_all_db():
-    path = '../output/'
+    path = '/sise/home/efrco/ML2/output/'
     for i, filename in enumerate(os.listdir(path)):
         if i == 0:
             df = pd.read_csv(path+filename)
@@ -34,7 +34,7 @@ def print_best(df, db_name):
 
 def save_result(df, db_name):
     print_best(df, db_name)
-    df.to_csv('./output/'+f'{db_name}.csv')
+    df.to_csv('/sise/home/efrco/ML2/output/'+f'{db_name}.csv')
 
 
 def get_feature_names_by_idx(col_names, idx):

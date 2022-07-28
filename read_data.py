@@ -4,10 +4,10 @@ import scipy.io
 
 
 # path to data folders
-ARFF_PATH = './data/ARFF/'
-BIO_PATH = './data/bioconductor/'
-MISC_PATH = './data/Misc/'
-SCIKIT_PATH = './data/scikit-feature datasets/'
+ARFF_PATH = '/sise/home/efrco/ML2/data/ARFF/'
+BIO_PATH = '/sise/home/efrco/ML2/data/bioconductor/'
+MISC_PATH = '/sise/home/efrco/ML2/data//Misc/'
+SCIKIT_PATH = '/sise/home/efrco/ML2/data//scikit-feature datasets/'
 
 
 def read_arff_files(data_name):

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="efrco@132.72.65.229:22" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="efrco@132.72.67.126:22 (3)" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
       <paths name="EFRCO@132.72.46.239:22">
         <serverdata>
@@ -800,6 +800,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="efrco@132.72.67.126:22 (3)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/efrco/ML2" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="efrco@132.72.67.132:22">
         <serverdata>
           <mappings>
@@ -916,6 +923,13 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="efrco@132.72.80.147:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy=" /home/efrco/ML2" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

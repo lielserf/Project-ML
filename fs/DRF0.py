@@ -7,10 +7,11 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 import pandas as pd
 from sklearn.datasets import fetch_openml
 from sklearn.feature_selection import SelectKBest, SelectPercentile, mutual_info_classif
-import random
+from skfeature.function.statistical_based import CFS
+# By having an ordered ranking, features with similar relevance to the class will be in the
+# same subset, which will facilitate the task of the subset filter which will be applied later
 
-
-class ReduceDF():
+class ReduceDRF0():
 
     def __init__(
         self,
@@ -29,22 +30,36 @@ class ReduceDF():
         c = [global_index[i] for i in local_index]
         return c
 
+    # ranking the original features before generating the subsets
+    # the method we choose is informatoin gain
+    def partition_dataset(self,X, y):
+
+        selector = SelectKBest(mutual_info_classif, k=X.shape[1])
+        X_reduced = selector.fit_transform(X, y)
+        cols = selector.get_support(indices=True)
+
+        ranking_dict = dict(zip(cols, selector.scores_))
+        sorted_score = sorted(ranking_dict.items(), key=lambda x: x[1], reverse=True)
+        sorted_dict = {k: v for k, v in sorted_score}
+
+        return list(sorted_dict.keys())
+
+    def CFS(self,X, y):
+
+        idx = CFS.cfs(X, y)
+        idx_list = np.ndarray.tolist(idx)
+        score_select_featuers= [1 for i in idx_list]
+        return idx_list,  score_select_featuers
+
+
 
     def svm(self,X,y):
-
-        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.3,
+        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
                                                             random_state=4)
-        if len(np.unique(y)) > 2:
-            clf = SVC()
-            clf.fit(x_train, y_train)
-            y_pred = clf.predict(x_test)
-            accuracy = accuracy_score(y_test, y_pred) * 100
-
-        else:
-            clf = SVC()
-            clf.fit(x_train, y_train)
-            y_pred = clf.predict(x_test)
-            accuracy = accuracy_score(y_test, y_pred) * 100
+        clf = SVC()
+        clf.fit(x_train, y_train)
+        y_pred = clf.predict(x_test)
+        accuracy = accuracy_score(y_test, y_pred) * 100
         print(accuracy)
         return accuracy
 
@@ -66,22 +81,18 @@ class ReduceDF():
         k = int(X.shape[0] / 2)
         # number of group with k features
         n = int(n_features / k)
-        index_column = [i for i in range(X.shape[1])]
-        random.shuffle(index_column)
+        index_column = self.partition_dataset(X,y)
 
         for i in range(n):
             d_i = X[:, index_column[i*k:i*k+k]]
             dict_group_original_index[i] = index_column[i*k:i*k+k]
-            dict_group_sub[i] = self.get_information_gain_features(d_i, y)
-
-
+            dict_group_sub[i] = self.CFS(d_i, y)
 
         global_index_select = self.map_local_index(dict_group_sub[0][0], dict_group_original_index[0])
         x_sub = X[:, global_index_select]
         basline = self.svm(x_sub, y)
         s_aux = global_index_select
         self.score = dict(zip(dict_group_sub[0][0], dict_group_sub[0][1]))
-
 
         for i in range(1,n):
             s_i = dict_group_sub[i]
