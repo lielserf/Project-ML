@@ -40,7 +40,7 @@ def save_result(df, db_name):
 def get_feature_names_by_idx(col_names, idx):
     return col_names[idx]
 
-
+print("d")
 def write_result(df, db_name, sample_num, org_features, reduce_method, k, reduce_time, features_idx, score_features, models_scores):
     features_num = len(org_features)
     cv_method = models_scores[list(models_scores)[0]]['cv']
