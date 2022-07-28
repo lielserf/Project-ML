@@ -45,15 +45,14 @@ def get_reducers(X, y):
     :return: dictionary contains the top-100 features and their scores
     """
 
-    reducers = {'mRmr': {},
-                'RFE': {},
-                'ReliefF': {},
-                'Fdr': {},
-                'DF': {},
-                'DRF0': {}
-
+    reducers = {#'mRmr': {},
+                #'RFE': {},
+                #'ReliefF': {},
+                #'Fdr': {},
+                #'DF': {},
+                #'DRF0': {},
+                'mRmd': {}
                 }
-    # reducers = {'DRF0': {}}
     for r in reducers:
         reducers[r] = run_reducer(r, X, y)
     return reducers
@@ -83,7 +82,7 @@ def main(db):
 
 
 if __name__ == "__main__":
-    args = 3
+    args = 1
     if args == 'all':
         for i in range(1,21):
             main(i)
