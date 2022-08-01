@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import numpy as np
+from augment import *
 
 path = '/sise/home/efrco/ML2/output/'
 
@@ -32,6 +33,8 @@ def print_best(df, db_name):
           f"\n\t\tK: {auc_df['Number of features selected (K)']}"
           f"\n\t\tLearning algorithm: {auc_df['Learning algorithm']}"
           f"\n\t\tAUC Score: {auc_df['Measure Value']}")
+    df = augment_db(df, db_name, auc_df['Filtering Algorithm'], auc_df['Number of features selected (K)'], auc_df['Learning algorithm'])
+    return df
 
 def save_database(X, y, db_name, X_cols, X_idx):
     # path = '/sise/home/efrco/ML2/data_process/'
@@ -44,7 +47,7 @@ def save_database(X, y, db_name, X_cols, X_idx):
     df.to_csv(path + db_name + ".csv")
 
 def save_result(df, db_name):
-    print_best(df, db_name)
+    df = print_best(df, db_name)
     df.to_csv(path+f'{db_name}.csv')
 
 

@@ -1,7 +1,8 @@
 from main import *
 from sklearn.decomposition import KernelPCA
 from imblearn.over_sampling import SMOTE
-
+from fs.feature_selection import *
+from utils.write_results import *
 
 def add_pca(X_train, X_test):
     pca_linear = KernelPCA(kernel='linear')
@@ -28,8 +29,7 @@ def add_smote(X_train, y_train):
     return sm.fit_resample(X_train, y_train)
 
 
-def augment_db(db, fs_method, k, clf):
-    df_res = create_new_results_df()
+def augment_db(df, db, fs_method, k, clf):
     clf = get_models()[clf]
     X, y, db_name, X_cols, X_idx, multi_class = load_data(db)
     X, y = per_processing(X, y)
@@ -88,9 +88,8 @@ def augment_db(db, fs_method, k, clf):
     scoring_dict['folds'] = split
 
     all_score = {clf: scoring_dict}
-    df_res = write_result(df_res, db_name, len(X_idx), X_cols, fs_method+"_Aug", k, retucer_dict['time'], retucer_dict['features'][:k],
+    df = write_result(df, db_name, len(X_idx), X_cols, fs_method+"_Aug", k, retucer_dict['time'], retucer_dict['features'][:k],
                           retucer_dict['scorer'][:k], all_score)
-    save_result(df_res, db_name+'augment')
+    return df
 
 
-augment_db('khan_train', 'Fdr', 10, 'RandomForest')

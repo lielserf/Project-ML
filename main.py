@@ -90,7 +90,7 @@ def main(db):
 
 
 if __name__ == "__main__":
-    args = 'all'
+    args = 1
     if args == 'all':
         for i in range(1,21):
             main(i)
