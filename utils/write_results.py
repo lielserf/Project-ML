@@ -37,7 +37,7 @@ def print_best(df, db_name):
     return df
 
 def save_database(X, y, db_name, X_cols, X_idx):
-    # path = '/sise/home/efrco/ML2/data_process/'
+    path = '/sise/home/efrco/ML2/data_process/'
     # save database
     columns = list(X_cols)
     columns.extend(["Class"])

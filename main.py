@@ -47,13 +47,13 @@ def get_reducers(X, y):
     """
 
     reducers = {
-                'mRmr': {},
+                # 'mRmr': {},
                 'RFE': {},
-                'ReliefF': {},
-                'Fdr': {},
-                'DRF0': {},
-                'mRmd': {},
-                'New_DRF0':{},
+                # 'ReliefF': {},
+                # 'Fdr': {},
+                # 'DRF0': {},
+                # 'mRmd': {},
+                # 'New_DRF0':{},
                 }
     for r in reducers:
         reducers[r] = run_reducer(r, X, y)
@@ -65,11 +65,10 @@ def main(db):
     Main Function - run all the program
     :return: Write to disk csv file with results
     """
-    path = '/sise/home/efrco/ML2/data_process/'
     X, y, db_name, X_cols, X_idx, multi_class = load_data(db)
     X, y = per_processing(X, y)
     print(60 * "*")
-    print(f"DB: {db_name}, shape: {X.shape} classes: {len(y.unique())}")
+    print(f"DB: {db_name}, shape: {X.shape} classes: {len(np.unique(y))}")
     # save database
     save_database(X, y, db_name, X_cols, X_idx)
 
@@ -90,7 +89,7 @@ def main(db):
 
 
 if __name__ == "__main__":
-    args = 1
+    args = 3
     if args == 'all':
         for i in range(1,21):
             main(i)

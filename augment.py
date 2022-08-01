@@ -3,6 +3,7 @@ from sklearn.decomposition import KernelPCA
 from imblearn.over_sampling import SMOTE
 from fs.feature_selection import *
 from utils.write_results import *
+import pandas as pd
 
 def add_pca(X_train, X_test):
     pca_linear = KernelPCA(kernel='linear')
