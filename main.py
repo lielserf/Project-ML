@@ -72,7 +72,7 @@ def main(db):
     print(f"DB: {db_name}, shape: {X.shape} classes: {len(np.unique(y))}")
     # save database
     save_database(X, y, db_name, X_cols, X_idx)
-    return
+
     reducers = get_reducers(X, y)
     cv_name, cv = cv_djustment(len(X))
     N_FEATURES_OPTIONS = [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 50, 100]
