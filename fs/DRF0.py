@@ -26,12 +26,12 @@ class ReduceDRF0():
         return c
 
     # ranking the original features before generating the subsets
-    # the method we choose is informatoin gain
+    # the method we choose is information gain
     def partition_dataset(self,X, y):
-        selector = SelectKBest(mutual_info_classif, k=X.shape[1])
-        X_reduced = selector.fit_transform(X, y)
-        cols = selector.get_support(indices=True)
 
+        selector = SelectKBest(mutual_info_classif, k=X.shape[1])
+        selector.fit(X, y)
+        cols = selector.get_support(indices=True)
         ranking_dict = dict(zip(cols, selector.scores_))
         sorted_score = sorted(ranking_dict.items(), key=lambda x: x[1], reverse=True)
         sorted_dict = {k: v for k, v in sorted_score}
@@ -100,5 +100,5 @@ class ReduceDRF0():
         sorted_score = sorted(self.score.items(), key=lambda x: x[1])
         sorted_dict = {k: v for k, v in sorted_score}
 
-        self.features = list(sorted_dict.keys())
-        self.score = list(sorted_dict.values())
+        self.features = np.array(list(sorted_dict.keys()))
+        self.score = np.array(list(sorted_dict.values()))
