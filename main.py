@@ -69,7 +69,7 @@ def main(db):
     X, y, db_name, X_cols, X_idx, multi_class = load_data(db)
     X, y = per_processing(X, y)
     print(60 * "*")
-    print(f"DB: {db_name}, shape: {X.shape()} classes: {len(y.unique())}")
+    print(f"DB: {db_name}, shape: {X.shape} classes: {len(y.unique())}")
     # save database
     save_database(X, y, db_name, X_cols, X_idx)
 
