@@ -34,6 +34,7 @@ def per_processing(X, y):
     pipe = Pipeline(pre_estimators)
     pipe.fit(X, y)
     X = pipe.transform(X)
+
     return X, y
 
 
@@ -52,7 +53,7 @@ def get_reducers(X, y):
                 'Fdr': {},
                 'DRF0': {},
                 'mRmd': {},
-                'DRF0Improve':{},
+                'New_DRF0':{},
                 }
     for r in reducers:
         reducers[r] = run_reducer(r, X, y)
@@ -64,8 +65,14 @@ def main(db):
     Main Function - run all the program
     :return: Write to disk csv file with results
     """
+    path = '/sise/home/efrco/ML2/data_process/'
     X, y, db_name, X_cols, X_idx, multi_class = load_data(db)
     X, y = per_processing(X, y)
+    print(60 * "*")
+    print(f"DB: {db_name}, shape: {X.shape()} classes: {len(y.unique())}")
+    # save database
+    save_database(X, y, db_name, X_cols, X_idx)
+
     reducers = get_reducers(X, y)
     cv_name, cv = cv_djustment(len(X))
     N_FEATURES_OPTIONS = [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 50, 100]

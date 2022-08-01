@@ -1,9 +1,11 @@
 import pandas as pd
 import os
+import numpy as np
 
+path = '/sise/home/efrco/ML2/output/'
 
 def concat_all_db():
-    path = '/sise/home/efrco/ML2/output/'
+    # path = '/sise/home/efrco/ML2/output/'
     for i, filename in enumerate(os.listdir(path)):
         if i == 0:
             df = pd.read_csv(path+filename)
@@ -31,10 +33,19 @@ def print_best(df, db_name):
           f"\n\t\tLearning algorithm: {auc_df['Learning algorithm']}"
           f"\n\t\tAUC Score: {auc_df['Measure Value']}")
 
+def save_database(X, y, db_name, X_cols, X_idx):
+    # path = '/sise/home/efrco/ML2/data_process/'
+    # save database
+    columns = list(X_cols)
+    columns.extend(["Class"])
+    y_reshape = y.reshape((-1, 1))
+    an_array = np.append(X, y_reshape, axis=1)
+    df = pd.DataFrame(data=an_array, columns=columns, index=X_idx, dtype=object)
+    df.to_csv(path + db_name + ".csv")
 
 def save_result(df, db_name):
     print_best(df, db_name)
-    df.to_csv('/sise/home/efrco/ML2/output/'+f'{db_name}.csv')
+    df.to_csv(path+f'{db_name}.csv')
 
 
 def get_feature_names_by_idx(col_names, idx):

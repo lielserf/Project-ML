@@ -26,9 +26,9 @@ def cv_djustment(sample_size):
     elif 50 <= sample_size < 100:
         return 'LOOCV', LeaveOneOut()
     elif 100 <= sample_size < 1000:
-        return '10-Fold-CV', KFold(n_splits=10, random_state=100)
+        return '10-Fold-CV', KFold(n_splits=10, random_state=100, shuffle=True)
     else:
-        return '5-Fold-CV', KFold(n_splits=5, random_state=100)
+        return '5-Fold-CV', KFold(n_splits=5, random_state=100, shuffle=True)
 
 
 def get_scores(y_test, y_pred, y_score, multi_class):

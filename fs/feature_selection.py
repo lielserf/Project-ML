@@ -50,12 +50,12 @@ def run_reducer(method, X, y):
         timeit = time.time() - start
         features, scores = get_features_and_scorer('DRF0', DRF0)
         run_time = timeit
-    elif method == 'DRF0Improve':
+    elif method == 'New_DRF0':
         ReduceDRF0_Improve = ReduceDRF0Improve(n_features_to_select=100)
         start = time.time()
         ReduceDRF0_Improve.fit(X, y)
         timeit = time.time() - start
-        features, scores = get_features_and_scorer('DRF0Improve', ReduceDRF0_Improve)
+        features, scores = get_features_and_scorer('New_DRF0', ReduceDRF0_Improve)
         run_time = timeit
     elif method == 'mRmd':
         mrmd = mRmd(n_features_to_select=100)
@@ -82,7 +82,7 @@ def get_features_and_scorer(reducer, reducer_method):
         features = np.argsort(ranking)[:100]
         score = np.sort(ranking)[:100]
         return features, score
-    elif reducer in ['DF', 'DRF0', 'mRmd','DRF0Improve']:
+    elif reducer in ['DF', 'DRF0', 'mRmd', 'New_DRF0']:
         features = reducer_method.features[:100]
         score = reducer_method.score[:100]
         return features, score
