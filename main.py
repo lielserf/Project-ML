@@ -49,7 +49,7 @@ def get_reducers(X, y):
     """
 
     reducers = {
-                # 'mRmr': {},
+                #'mRmr': {},
                 'RFE': {},
                 # 'ReliefF': {},
                 # 'Fdr': {},

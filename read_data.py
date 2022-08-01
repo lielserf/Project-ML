@@ -69,6 +69,13 @@ def read_bio_files(data_name):
         return e
     return X, y
 
+def read_toy(data_name):
+    p = '/sise/home/efrco/ML2/data/'
+    df = pd.read_csv(p + 'toy.csv', index_col=0)
+
+    y = df.iloc[:, 0]
+    X = df.iloc[:, 1:]
+    return X, y
 
 # map name of data to the function that read the data
 data_name_to_function = {'CNS': read_arff_files, 'Lymphoma': read_arff_files, 'MLL': read_arff_files,
@@ -78,7 +85,7 @@ data_name_to_function = {'CNS': read_arff_files, 'Lymphoma': read_arff_files, 'M
                          'NCI60_Affy': read_misc_files, 'Nutt-2003-v2_BrainCancer.xlsx - Sayfa1': read_misc_files,
                          'Risinger_Endometrial Cancer.xlsx - Sayfa1': read_misc_files, 'madelon': read_scikit_files,
                          'ORL': read_scikit_files, 'RELATHE': read_scikit_files, 'USPS': read_scikit_files,
-                         'Yale': read_scikit_files}
+                         'Yale': read_scikit_files, 'toy': read_toy}
 
 
 def read_data(data_name):
