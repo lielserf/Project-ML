@@ -2,7 +2,7 @@ from main import *
 from sklearn.decomposition import KernelPCA
 from imblearn.over_sampling import SMOTE
 from fs.feature_selection import *
-from utils.write_results import *
+import utils.write_results as writer
 import pandas as pd
 
 def add_pca(X_train, X_test):
@@ -89,7 +89,7 @@ def augment_db(df, db, fs_method, k, clf):
     scoring_dict['folds'] = split
 
     all_score = {clf: scoring_dict}
-    df = write_result(df, db_name, len(X_idx), X_cols, fs_method+"_Aug", k, retucer_dict['time'], retucer_dict['features'][:k],
+    df = writer.write_result(df, db_name, len(X_idx), X_cols, "Aug_" + fs_method, k, retucer_dict['time'], retucer_dict['features'][:k],
                           retucer_dict['scorer'][:k], all_score)
     return df
 

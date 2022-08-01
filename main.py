@@ -6,8 +6,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PowerTransformer, StandardScaler
 from sklearn.feature_selection import VarianceThreshold
 from fs.feature_selection import run_reducer
-from utils.write_results import *
+# from utils.write_results import write_result, save_result,save_database, create_new_results_df
 from utils.clf_models import *
+from utils.write_results import *
+
 import time
 
 
@@ -59,7 +61,6 @@ def get_reducers(X, y):
         reducers[r] = run_reducer(r, X, y)
     return reducers
 
-
 def main(db):
     """
     Main Function - run all the program
@@ -89,7 +90,7 @@ def main(db):
 
 
 if __name__ == "__main__":
-    args = 3
+    args = 1
     if args == 'all':
         for i in range(1,21):
             main(i)
