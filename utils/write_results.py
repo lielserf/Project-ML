@@ -1,12 +1,12 @@
 import pandas as pd
 import os
 import numpy as np
-import augment  as aug
+import augment as aug
 
 path = '/sise/home/efrco/ML2/output/'
 
 def concat_all_db():
-    # path = '/sise/home/efrco/ML2/output/'
+
     for i, filename in enumerate(os.listdir(path)):
         if i == 0:
             df = pd.read_csv(path+filename)
@@ -60,6 +60,7 @@ def write_result(df, db_name, sample_num, org_features, reduce_method, k, reduce
     cv_method = models_scores[list(models_scores)[0]]['cv']
     folds = models_scores[list(models_scores)[0]]['folds']
     selected_features = get_feature_names_by_idx(org_features, features_idx).tolist()
+    selected_features = [str(i) for i in selected_features]
     selected_features = ';'.join(selected_features)
     score_features = [str(i) for i in score_features]
     score_features = ';'.join(score_features)

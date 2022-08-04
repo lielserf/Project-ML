@@ -30,8 +30,8 @@ def add_smote(X_train, y_train):
     return sm.fit_resample(X_train, y_train)
 
 
-def augment_db(df, db, fs_method, k, clf):
-    clf = get_models()[clf]
+def augment_db(df, db, fs_method, k, clf_name):
+    clf = get_models()[clf_name]
     X, y, db_name, X_cols, X_idx, multi_class = load_data(db)
     X, y = per_processing(X, y)
 
@@ -88,7 +88,7 @@ def augment_db(df, db, fs_method, k, clf):
     scoring_dict['cv'] = cv_name
     scoring_dict['folds'] = split
 
-    all_score = {clf: scoring_dict}
+    all_score = {clf_name: scoring_dict}
     df = writer.write_result(df, db_name, len(X_idx), X_cols, "Aug_" + fs_method, k, retucer_dict['time'], retucer_dict['features'][:k],
                           retucer_dict['scorer'][:k], all_score)
     return df

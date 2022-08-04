@@ -49,13 +49,13 @@ def get_reducers(X, y):
     """
 
     reducers = {
-                #'mRmr': {},
+                'mRmr': {},
                 'RFE': {},
-                # 'ReliefF': {},
-                # 'Fdr': {},
-                # 'DRF0': {},
-                # 'mRmd': {},
-                # 'New_DRF0':{},
+                'ReliefF': {},
+                'Fdr': {},
+                'mRmd': {},
+                'New_DRF0': {},
+                'DRF0': {}
                 }
     for r in reducers:
         reducers[r] = run_reducer(r, X, y)
@@ -88,11 +88,10 @@ def main(db):
             df_res = write_result(df_res, db_name, len(X_idx), X_cols, r, k, reducers[r]['time'], reducers[r]['features'][:k], reducers[r]['scorer'][:k], models_scores)
     save_result(df_res, db_name)
 
-
 if __name__ == "__main__":
-    args = 1
+    args ='all'
     if args == 'all':
-        for i in range(1,21):
+        for i in range(13,16):
             main(i)
     else:
         main(args)

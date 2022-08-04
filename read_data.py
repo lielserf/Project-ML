@@ -80,13 +80,12 @@ def read_toy(data_name):
 # map name of data to the function that read the data
 data_name_to_function = {'CNS': read_arff_files, 'Lymphoma': read_arff_files, 'MLL': read_arff_files,
                          'Ovarian': read_arff_files, 'SRBCT': read_arff_files, 'ayeastCC': read_bio_files,
-                         'bladderbatch': read_bio_files, 'CLL': read_bio_files, 'DLBCL': read_bio_files,
+                         'bladderbatch': read_bio_files, 'CLL': read_bio_files, 'ALL': read_bio_files,
                          'leukemiasEset': read_bio_files, 'GDS4824': read_misc_files, 'khan_train': read_misc_files,
-                         'NCI60_Affy': read_misc_files, 'Nutt-2003-v2_BrainCancer.xlsx - Sayfa1': read_misc_files,
+                         'ProstateCancer': read_misc_files, 'Nutt-2003-v2_BrainCancer.xlsx - Sayfa1': read_misc_files,
                          'Risinger_Endometrial Cancer.xlsx - Sayfa1': read_misc_files, 'madelon': read_scikit_files,
                          'ORL': read_scikit_files, 'RELATHE': read_scikit_files, 'USPS': read_scikit_files,
                          'Yale': read_scikit_files, 'toy': read_toy}
-
 
 def read_data(data_name):
     """
