@@ -71,7 +71,7 @@ def read_bio_files(data_name):
 
 def read_toy(data_name):
     p = '/sise/home/efrco/ML2/data/'
-    df = pd.read_csv(p + 'toy.csv', index_col=0)
+    df = pd.read_csv(p + 'toy.csv', header=None)
 
     y = df.iloc[:, 0]
     X = df.iloc[:, 1:]
