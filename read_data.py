@@ -76,7 +76,7 @@ def read_toy(data_name):
     y = df.iloc[:, 0]
     X = df.iloc[:, 1:]
     return X, y
-print("f")
+print("fFF")
 # map name of data to the function that read the data
 data_name_to_function = {'CNS': read_arff_files, 'Lymphoma': read_arff_files, 'MLL': read_arff_files,
                          'Ovarian': read_arff_files, 'SRBCT': read_arff_files, 'ayeastCC': read_bio_files,
