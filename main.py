@@ -91,7 +91,7 @@ def main(db):
 if __name__ == "__main__":
     args ='all'
     if args == 'all':
-        for i in range(13,16):
+        for i in range(16,21):
             main(i)
     else:
         main(args)

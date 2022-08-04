@@ -222,14 +222,14 @@ class ReduceDRF0Improve():
                     self.score[global_index_select[k]] = s_i[1][k]
                 # Choose the best subset
                 s_aux_global, scores = self.get_information_gain_features(x_sub, y)
-                s_aux_temp = self.map_local_index(s_aux_global, s_aux)
+                s_aux_temp = self.map_local_index(s_aux_global, S)
                 x_sub = X[:, s_aux_temp]
                 accuracy = self.svm(x_sub, y)
                 if accuracy > basline:
                     basline = accuracy
-                    s_aux = s_aux_temp
-                    for k in range(len(s_aux)):
-                        self.score[s_aux[k]] = scores[k]
+                    S = s_aux_temp
+                    for k in range(len(S)):
+                        self.score[S[k]] = scores[k]
 
             else:
                 S = [x for x in S if x not in global_index_select]
