@@ -86,6 +86,7 @@ def main(db):
     save_result(df_res, db_name)
 
 if __name__ == "__main__":
+    # change it for switching databases
     args = 'all'
     if args == 'all':
         for i in range(1,21):
