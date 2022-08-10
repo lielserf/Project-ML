@@ -1,17 +1,14 @@
-from sklearn.svm import SVC
-from sklearn.feature_selection import mutual_info_classif as MIC
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
-from sklearn.metrics import confusion_matrix, accuracy_score
-import pandas as pd
-from sklearn.datasets import fetch_openml
-from sklearn.feature_selection import mutual_info_regression, mutual_info_classif
 from pyitlib import discrete_random_variable as drv
 
 
 class mRmd():
-
+    """
+    filter features using min redundancy max dependency
+    :param n_features_to_select - number of feature the function need to select over all the features
+    :parameter features - list of the k selected features
+    :parameter score - list of all the score of each feature that selected
+    """
     def __init__(
             self,
             n_features_to_select,
