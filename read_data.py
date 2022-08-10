@@ -4,10 +4,10 @@ import scipy.io
 
 
 # path to data folders
-ARFF_PATH = '/sise/home/efrco/ML2/data/ARFF/'
-BIO_PATH = '/sise/home/efrco/ML2/data/bioconductor/'
-MISC_PATH = '/sise/home/efrco/ML2/data//Misc/'
-SCIKIT_PATH = '/sise/home/efrco/ML2/data//scikit-feature datasets/'
+ARFF_PATH = './data/ARFF/'
+BIO_PATH = './data/bioconductor/'
+MISC_PATH = './data//Misc/'
+SCIKIT_PATH = './data//scikit-feature datasets/'
 
 
 def read_arff_files(data_name):
@@ -69,14 +69,7 @@ def read_bio_files(data_name):
         return e
     return X, y
 
-def read_toy(data_name):
-    p = '/sise/home/efrco/ML2/data/'
-    df = pd.read_csv(p + 'toy.csv', header=None)
 
-    y = df.iloc[:, 0]
-    X = df.iloc[:, 1:]
-    return X, y
-print("fFF")
 # map name of data to the function that read the data
 data_name_to_function = {'CNS': read_arff_files, 'Lymphoma': read_arff_files, 'MLL': read_arff_files,
                          'Ovarian': read_arff_files, 'SRBCT': read_arff_files, 'ayeastCC': read_bio_files,
@@ -84,8 +77,8 @@ data_name_to_function = {'CNS': read_arff_files, 'Lymphoma': read_arff_files, 'M
                          'leukemiasEset': read_bio_files, 'GDS4824': read_misc_files, 'khan_train': read_misc_files,
                          'ProstateCancer': read_misc_files, 'Nutt-2003-v2_BrainCancer.xlsx - Sayfa1': read_misc_files,
                          'Risinger_Endometrial Cancer.xlsx - Sayfa1': read_misc_files, 'madelon': read_scikit_files,
-                         'ORL': read_scikit_files, 'RELATHE': read_scikit_files, 'USPS': read_scikit_files,
-                         'Yale': read_scikit_files, 'toy': read_toy}
+                         'ORL': read_scikit_files, 'Carcinom': read_scikit_files, 'USPS': read_scikit_files,
+                         'Yale': read_scikit_files}
 
 def read_data(data_name):
     """

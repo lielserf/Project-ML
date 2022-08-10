@@ -13,6 +13,10 @@ from sklearn.base import clone
 
 
 def get_models():
+    """
+    The function returns all the model for classifier the data
+    :return: dictionary map model name to its class
+    """
     return {'SVM': SVC(probability=True),
             'KNN': KNeighborsClassifier(),
             'RandomForest': RandomForestClassifier(),
@@ -21,6 +25,11 @@ def get_models():
 
 
 def cv_djustment(sample_size):
+    """
+    Adjust the Cross-Validation method to the data
+    :param sample_size: number of sample
+    :return: cv methods and the name
+    """
     if sample_size < 50:
         return 'Leave-pair-out', LeavePOut(2)
     elif 50 <= sample_size < 100:
@@ -32,6 +41,14 @@ def cv_djustment(sample_size):
 
 
 def get_scores(y_test, y_pred, y_score, multi_class):
+    """
+    calculate metric for scoring the ML model. for binary class and multi-class
+    :param y_test:
+    :param y_pred:
+    :param y_score:
+    :param multi_class:
+    :return:
+    """
     y_test = np.array(y_test)
     y_pred = np.array(y_pred)
     y_score = np.array(y_score)
@@ -53,6 +70,16 @@ def get_scores(y_test, y_pred, y_score, multi_class):
 
 
 def evaluate_model(model, X, y, cv_name, cv, multi_class=False):
+    """
+    Build each model for each fold
+    :param model: ML model
+    :param X: X data
+    :param y: the target variable
+    :param cv_name: cv type
+    :param cv: CV method
+    :param multi_class: boolean
+    :return:
+    """
     fit_time, pred_time, split = 0, 0, 1
     pred, pred_prob, y_test_all = [], [], []
 

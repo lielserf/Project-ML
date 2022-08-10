@@ -29,7 +29,9 @@ class Convert(BaseEstimator, TransformerMixin):
 
 
 class FillNan(BaseEstimator, TransformerMixin):
-    """  """
+    """
+    class filling nan values using TransformerMixin with mean function
+    """
 
     def fit(self, X, y=None):
         self.X = X

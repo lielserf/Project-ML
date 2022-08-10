@@ -1,12 +1,9 @@
-# from sklearnex import patch_sklearn
-# patch_sklearn()
 import read_data as read
 from preprocessing import *
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PowerTransformer, StandardScaler
 from sklearn.feature_selection import VarianceThreshold
 from fs.feature_selection import run_reducer
-# from utils.write_results import write_result, save_result,save_database, create_new_results_df
 from utils.clf_models import *
 from utils.write_results import *
 
@@ -27,7 +24,7 @@ def load_data(db):
     return X, y, db_name, X_cols, X_idx, multi_class
 
 
-def per_processing(X, y):
+def pre_processing(X, y):
     """
     Run pipeline pf preprocessing methods
     """
@@ -67,10 +64,10 @@ def main(db):
     :return: Write to disk csv file with results
     """
     X, y, db_name, X_cols, X_idx, multi_class = load_data(db)
-    X, y = per_processing(X, y)
+    X, y = pre_processing(X, y)
     print(60 * "*")
     print(f"DB: {db_name}, shape: {X.shape} classes: {len(np.unique(y))}")
-    # save database
+    # save database after preprocessing
     save_database(X, y, db_name, X_cols, X_idx)
 
     reducers = get_reducers(X, y)
@@ -89,9 +86,9 @@ def main(db):
     save_result(df_res, db_name)
 
 if __name__ == "__main__":
-    args ='all'
+    args = 'all'
     if args == 'all':
-        for i in range(16,21):
+        for i in range(1,21):
             main(i)
     else:
         main(args)

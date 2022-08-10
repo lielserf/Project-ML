@@ -3,10 +3,13 @@ import os
 import numpy as np
 import augment as aug
 
-path = '/sise/home/efrco/ML2/output/'
+path = './output/'
+
 
 def concat_all_db():
-
+    """
+    separate function to concat all the df of result
+    """
     for i, filename in enumerate(os.listdir(path)):
         if i == 0:
             df = pd.read_csv(path+filename)
@@ -19,6 +22,10 @@ def concat_all_db():
 
 
 def create_new_results_df():
+    """
+    create dataframe for each db
+    :return:
+    """
     df_result = pd.DataFrame(columns=['Dataset Name', 'Number of samples', 'Original Number of features',
                                   'Filtering Algorithm', 'Learning algorithm', 'Number of features selected (K)',
                                   'CV Method', 'Fold', 'Measure Type', 'Measure Value',
@@ -27,6 +34,12 @@ def create_new_results_df():
 
 
 def print_best(df, db_name):
+    """
+    Find and print the configuration used to give the best AUC score for that db
+    :param df: result df
+    :param db_name: db name
+    :return:
+    """
     auc_df = df.loc[df['Measure Type'] == 'AUC']
     auc_df = auc_df.loc[auc_df['Measure Value'].idxmax()]
     print(f"{db_name} --> Best Configuration ----- \n\t\tFiltering Algorithm: {auc_df['Filtering Algorithm']}"
@@ -37,16 +50,31 @@ def print_best(df, db_name):
     return df
 
 def save_database(X, y, db_name, X_cols, X_idx):
-    path = '/sise/home/efrco/ML2/data_process/'
-    # save database
+    """
+    Save the data after pre-processing stage
+    :param X:
+    :param y:
+    :param db_name:
+    :param X_cols: feature names
+    :param X_idx: data index
+    :return:
+    """
+    path_pre = './data_process/'
     columns = list(X_cols)
     columns.extend(["Class"])
     y_reshape = y.reshape((-1, 1))
     an_array = np.append(X, y_reshape, axis=1)
     df = pd.DataFrame(data=an_array, columns=columns, index=X_idx, dtype=object)
-    df.to_csv(path + db_name + ".csv")
+    df.to_csv(path_pre + db_name + ".csv")
+
 
 def save_result(df, db_name):
+    """
+    save to disk the dataframe of the result (csv format)
+    :param df: df of result for the current db
+    :param db_name: db name
+    :return:
+    """
     df = print_best(df, db_name)
     df.to_csv(path+f'{db_name}.csv')
 
@@ -56,6 +84,20 @@ def get_feature_names_by_idx(col_names, idx):
 
 
 def write_result(df, db_name, sample_num, org_features, reduce_method, k, reduce_time, features_idx, score_features, models_scores):
+    """
+    uterate over the dictionary of result and write them to the df
+    :param df: the dataframe contains the result so far
+    :param db_name: db name
+    :param sample_num: number of sample in db
+    :param org_features: feature name before reducing
+    :param reduce_method: the current filter method
+    :param k: the current k
+    :param reduce_time: time take for filter method
+    :param features_idx: the selected feature indexes
+    :param score_features: the score of the selected features
+    :param models_scores: the evaluation of the ML methods
+    :return:
+    """
     features_num = len(org_features)
     cv_method = models_scores[list(models_scores)[0]]['cv']
     folds = models_scores[list(models_scores)[0]]['folds']

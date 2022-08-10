@@ -6,6 +6,9 @@ import utils.write_results as writer
 import pandas as pd
 
 def add_pca(X_train, X_test):
+    """
+    Add features using PCA of another reduced features - linear and rbf
+    """
     pca_linear = KernelPCA(kernel='linear')
     pca_rbf = KernelPCA(kernel='rbf')
 
@@ -26,14 +29,26 @@ def add_pca(X_train, X_test):
 
 
 def add_smote(X_train, y_train):
-    sm = SMOTE(random_state=42)
+    """
+    Add rows for train data using SMOTE
+    """
+    sm = SMOTE(random_state=42, k_neighbors=2)
     return sm.fit_resample(X_train, y_train)
 
 
 def augment_db(df, db, fs_method, k, clf_name):
+    """
+    The main function - augment the data with best configuration using PCA and SMOTE, and build again the classifier model
+    :param df: dataframe of the data
+    :param db: database name
+    :param fs_method: the best filter method to reduce features
+    :param k: the k gives the best AUC score
+    :param clf_name: the classifier bring the best AUC score
+    :return: dict of score
+    """
     clf = get_models()[clf_name]
     X, y, db_name, X_cols, X_idx, multi_class = load_data(db)
-    X, y = per_processing(X, y)
+    X, y = pre_processing(X, y)
 
     retucer_dict = run_reducer(fs_method, X, y)
     X_new = X[:, :][:, retucer_dict['features'][:k]]
