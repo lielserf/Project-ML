@@ -46,6 +46,7 @@ After selecting a database, the file will be loaded, a pipeline of:
 * selection of features using 7 algorithms (4 for a baseline, 2 that we implemented, and 1 which is an improvement of one of the implementations)
 * measuring the performance using the construction of 5 classifiers
 * evaluating them using 4 metrics with cross-validation that best fits the data
+* augment of the data, base on the "best configuration", using SMOTE and PCA, and evaluation
 
 ## Output
 For each database the output is csv file contain the metrics for evaluate the ML methods, time for reducing and for build the classifier and predict with its. All that files placed in `output` folder. 
